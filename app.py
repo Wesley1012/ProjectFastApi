@@ -1,0 +1,31 @@
+import uvicorn
+from fastapi import FastAPI, Body, Header, Response
+from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse,\
+                              RedirectResponse, FileResponse, StreamingResponse
+
+
+app = FastAPI()
+
+@app.get('/')
+def home():
+    return {"message": "Zdarova, zaebal!"}
+
+@app.post('/hi')
+def hello(name: str = Body(embed=True)):
+    return f"Hello, {name}"
+
+@app.post("/agent")
+def get_agent(user_agent: str = Header()):
+    return user_agent
+
+@app.get("/happy")
+def happy(statuse_code: int =200):
+    return "4inazes"
+
+@app.get("/header/{name}/{value}")
+def header(name: str, value: str, response: Response):
+    response.headers[name] = value
+    return "normal body"
+
+if __name__ == "__main__":
+    uvicorn.run("app:app", port=8000, reload=True)
