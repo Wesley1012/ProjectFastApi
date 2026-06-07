@@ -1,5 +1,5 @@
 import uvicorn
-from fastapi import FastAPI, Body, Header, Response
+from fastapi import FastAPI, Body, Header, Response, Depends, Query
 from fastapi.responses import HTMLResponse, JSONResponse, PlainTextResponse,\
                               RedirectResponse, FileResponse, StreamingResponse
 
@@ -26,6 +26,23 @@ def happy(statuse_code: int =200):
 def header(name: str, value: str, response: Response):
     response.headers[name] = value
     return "normal body"
+
+def user_dep(name: str = Query(..., description="Имя пользователя"),
+             password: str = Query(..., description="Пароль")):
+    return {"name": name, "valid": True}
+
+@app.get("/user")
+def get_user(user: dict = Depends(user_dep)) -> dict:
+    return user
+
+def check_dep(name: str = Query(..., description="Имя пользователя"),
+             password: str = Query(..., description="Пароль")):
+    if not name:
+        raise
+
+@app.get("/check_user", description=[Depends(check_dep())])
+def check_user() -> bool:
+    return True
 
 if __name__ == "__main__":
     uvicorn.run("app:app", port=8000, reload=True)
