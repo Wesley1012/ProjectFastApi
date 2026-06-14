@@ -1,4 +1,4 @@
-from model import Creature
+from lessons.model import Creature
 
 _creatures: list[Creature] = [
     Creature(name='yeti',

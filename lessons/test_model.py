@@ -1,4 +1,4 @@
-from model import Creature
+from lessons.model import Creature
 
 dragon = Creature(
     name='f2',
