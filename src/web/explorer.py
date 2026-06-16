@@ -1,7 +1,31 @@
 from fastapi import APIRouter
+from model.explorer import Explorer
+import fake.explorer as service
 
-router = APIRouter(prefix = "/explorer")
+router = APIRouter(prefix="/explorer")
 
 @router.get("/")
-def top():
-    return "top explorer endpoint"
+def get_all() -> list[Explorer]:
+    return service.get_all()
+
+@router.get("/{name}")
+def get_one(name) -> Explorer | None:
+    return service.get_one(name)
+
+#Остальные точки пока ничего не делают:
+@router.post("/{name}")
+def create(explorer: Explorer) -> Explorer:
+    return service.create(explorer)
+
+@router.patch("/{name}")
+def modify(explorer: Explorer) -> Explorer:
+    return service.modify(explorer)
+
+@router.put("/{name}")
+def replace(explorer: Explorer) -> Explorer:
+    return service.replace(explorer)
+
+@router.delete("/{name}")
+def delete(name: str):
+    return service.delete(name)
+
