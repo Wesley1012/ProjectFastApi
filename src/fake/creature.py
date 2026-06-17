@@ -27,18 +27,18 @@ def get_one(name: str) -> Creature | None:
     return None
 
 #Ниже будут функции без функционала
-def create(explorer: Creature) -> Creature:
+def create(creature: Creature) -> Creature:
     """Добавление существа"""
-    return Creature
+    return creature
 
-def modify(explorer: Creature) -> Creature:
+def modify(creature: Creature) -> Creature:
     """Частичное изменение записи существа"""
-    return Creature
+    return creature
 
-def replace(name: str) -> Creature:
+def replace(creature: Creature) -> Creature:
     """Полная замена записи существа"""
-    return Creature
+    return creature
 
-def delete(name: str) -> Creature:
+def delete(name: str):
     """Удаление записи; возращение None если запись существовала"""
-    return Creature
+    return None
