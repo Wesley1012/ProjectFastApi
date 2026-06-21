@@ -1,6 +1,6 @@
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 class Explorer(BaseModel):
     name: str
-    country: str
-    description: str
+    country: str = Field(default="", description="Страна")
+    description: str = Field(default="", min_length=0)

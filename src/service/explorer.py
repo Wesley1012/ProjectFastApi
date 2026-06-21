@@ -1,5 +1,5 @@
 from model.explorer import Explorer
-import fake.explorer as service
+import data.explorer as service
 
 
 def get_all() -> list[Explorer]:

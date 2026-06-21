@@ -1,7 +1,7 @@
-from init import conn, curs
+from data.init import conn, curs
 from model.creature import Creature
 
-curs.execute("""create table creature(
+curs.execute("""create table if not exists creature(
                 name text primary key,
                 description text,
                 country text,
@@ -9,7 +9,7 @@ curs.execute("""create table creature(
                 aka text)""")
 
 def row_to_model(row: tuple) -> Creature:
-    name, description, country, area, aka = row
+    (name, description, country, area, aka) = row
     return Creature(name, description, country, area, aka)
 
 def model_to_dict(creature: Creature) -> dict:
@@ -29,7 +29,7 @@ def get_all() -> list[Creature]:
 
 def create(creature: Creature):
     qry = """insert into creature values
-             (:name, :descriptions, :country, :area, :aka)"""
+    (:name, :descriptions, :country, :area, :aka)"""
     params = model_to_dict(creature)
     curs.execute(qry, params)
     return get_one(creature.name)

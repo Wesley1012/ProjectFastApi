@@ -22,6 +22,7 @@ def get_one(name: str) -> Explorer | None:
 #Ниже будут функции без функционала
 def create(explorer: Explorer) -> Explorer:
     """Добавление исследователя"""
+    _explorers.append(explorer)
     return explorer
 
 def modify(explorer: Explorer) -> Explorer:

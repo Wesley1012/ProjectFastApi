@@ -1,6 +1,6 @@
 from fastapi import APIRouter
 from model.explorer import Explorer
-import fake.explorer as service
+import service.explorer as service
 
 router = APIRouter(prefix="/explorer")
 
@@ -14,15 +14,15 @@ def get_one(name) -> Explorer | None:
     return service.get_one(name)
 
 #Остальные точки пока ничего не делают:
-@router.post("/{name}")
+@router.post("/")
 def create(explorer: Explorer) -> Explorer:
     return service.create(explorer)
 
-@router.patch("/{name}")
+@router.patch("/")
 def modify(explorer: Explorer) -> Explorer:
     return service.modify(explorer)
 
-@router.put("/{name}")
+@router.put("/")
 def replace(explorer: Explorer) -> Explorer:
     return service.replace(explorer)
 
