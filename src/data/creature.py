@@ -1,5 +1,6 @@
-from data.init import conn, curs
+from data.init import conn, curs, IntegrityError
 from model.creature import Creature
+from errors import Missing, Duplicate
 
 curs.execute("""create table if not exists creature(
                 name text primary key,
@@ -9,8 +10,14 @@ curs.execute("""create table if not exists creature(
                 aka text)""")
 
 def row_to_model(row: tuple) -> Creature:
-    (name, description, country, area, aka) = row
-    return Creature(name, description, country, area, aka)
+    if row is None:
+        return None
+    name, description, country, area, aka = row
+    return Creature(name=name,
+                    description=description,
+                    country=country,
+                    area=area,
+                    aka=aka)
 
 def model_to_dict(creature: Creature) -> dict:
     return creature.dict()
@@ -19,7 +26,11 @@ def get_one(name: str) -> Creature:
     qry = "select * from creature where name=:name"
     params = {"name": name}
     curs.execute(qry, params)
-    return row_to_model(curs.fetchone())
+    row = curs.fetchone()
+    if row:
+        return row_to_model(row)
+    else:
+        raise Missing(msg=f"Creature {name} not found")
 
 
 def get_all() -> list[Creature]:
@@ -28,31 +39,39 @@ def get_all() -> list[Creature]:
     return [row_to_model(row) for row in curs.fetchall()]
 
 def create(creature: Creature):
-    qry = """insert into creature values
-    (:name, :descriptions, :country, :area, :aka)"""
+    qry = """insert into creature (name, description, country, area, aka)
+     values (:name, :description, :country, :area, :aka)"""
     params = model_to_dict(creature)
-    curs.execute(qry, params)
+    try:
+        curs.execute(qry, params)
+    except IntegrityError:
+        raise Duplicate(msg=
+                        f"Creature {creature.name} already exists")
     return get_one(creature.name)
 
-def modify(creature: Creature):
-    qry = """ update creature
-              set country=:country,
-                  name=:name,
-                  description=:description,
-                  area=:area,
-                  aka=:aka
-              where name=:name_orig"""
+def modify(name: str, creature: Creature):
+    qry = """update creature
+               set name=:name,
+                   country=:country,
+                   area=:area,
+                   description=:description,
+                   aka=:aka
+               where name=:old_name"""
     params = model_to_dict(creature)
-    params["name_orig"] = creature.name
-    _ = curs.execute(qry, params)
+    params["old_name"] = name
+
+    curs.execute(qry, params)
+    if curs.rowcount == 0:
+        raise Missing(msg=f"Creature {name} not found")
     return get_one(creature.name)
 
 
 # def replace(creature: Creature):
 #     return creature
 
-def delete(creature: Creature):
+def delete(name: str):
     qry = "delete from creature where name = :name"
-    params = {"name": creature.name}
-    res = curs.execute(qry, params)
-    return bool(res)
+    params = {"name": name}
+    curs.execute(qry, params)
+    if curs.rowcount != 1:
+        raise Missing(msg=f"Creature {name} not found")

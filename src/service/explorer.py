@@ -11,12 +11,12 @@ def get_one(name: str) -> Explorer | None:
 def create(explorer: Explorer) -> Explorer:
     return service.create(explorer)
 
-def modify(id, explorer: Explorer) -> Explorer:
-    return service.modify(id, explorer)
+def modify(name: str, explorer: Explorer) -> Explorer:
+    return service.modify(name, explorer)
+#
+# def replace(id, explorer: Explorer) -> Explorer:
+#     return service.replace(id, explorer)
 
-def replace(id, explorer: Explorer) -> Explorer:
-    return service.replace(id, explorer)
-
-def delete(id, explorer: Explorer) -> bool:
-    return service.delete(id, explorer)
+def delete(name: str):
+    return service.delete(name)
 

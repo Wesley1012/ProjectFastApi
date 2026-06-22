@@ -22,7 +22,7 @@ def get_one(name: str) -> Explorer:
     if row:
         return row_to_model(row)
     else:
-        raise Missing(msg=f"Explorer {name} nof found")
+        raise Missing(msg=f"Explorer {name} not found")
 
 def get_all() -> list[Explorer]:
     qry = "select * from explorer"
@@ -42,23 +42,28 @@ def create(explorer: Explorer) -> Explorer:
     return get_one(explorer.name)
 
 def modify(name: str, explorer: Explorer) -> Explorer:
+    existing = get_one(name)
+    new_name = explorer.name if explorer.name else name
     qry = """update explorer
             set country=:country,
-            name=:name,
+            name=:new_name,
             description=:description
-            where name=:name_orig"""
-    params = model_to_dict(explorer)
-    params["name_orig"] = explorer.name
+            where name=:old_name"""
+    params = {
+        "new_name": new_name,
+        "country": explorer.country,
+        "description": explorer.description,
+        "old_name": name
+    }
     curs.execute(qry, params)
-    if curs.rowcount == 1:
-        return get_one(explorer.name)
-    else:
-        raise Missing(msg=f"Explorer {name} nof found")
+    if curs.rowcount == 0:
+        raise Missing(msg=f"Explorer {name} not found")
+    return get_one(new_name)
 
 def delete(name: str):
     qry = "delete from explorer where name = :name"
     params = {"name": name}
     curs.execute(qry, params)
     if curs.rowcount != 1:
-        raise Missing(msg=f"Explorer {name} nof found")
+        raise Missing(msg=f"Explorer {name} not found")
 
