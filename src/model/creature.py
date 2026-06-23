@@ -1,6 +1,6 @@
 from pydantic import BaseModel
 
-class Creature(BaseModel):
+class Explorer(BaseModel):
     name: str
     country: str
     area: str

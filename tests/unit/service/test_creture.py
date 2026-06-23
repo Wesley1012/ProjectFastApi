@@ -1,7 +1,7 @@
-from model.creature import Creature
+from model.creature import Explorer
 from service import creature as code
 
-sample = Creature(name="Yeti",
+sample = Explorer(name="Yeti",
                   country="CN",
                   area="Himalayas",
                   description="Hirsute Himalayan",

@@ -1,5 +1,5 @@
 from data.init import conn, curs, IntegrityError
-from model.creature import Creature
+from model.creature import Explorer
 from errors import Missing, Duplicate
 
 curs.execute("""create table if not exists creature(
@@ -9,20 +9,20 @@ curs.execute("""create table if not exists creature(
                 area text,
                 aka text)""")
 
-def row_to_model(row: tuple) -> Creature:
+def row_to_model(row: tuple) -> Explorer:
     if row is None:
         return None
     name, description, country, area, aka = row
-    return Creature(name=name,
+    return Explorer(name=name,
                     description=description,
                     country=country,
                     area=area,
                     aka=aka)
 
-def model_to_dict(creature: Creature) -> dict:
+def model_to_dict(creature: Explorer) -> dict:
     return creature.dict()
 
-def get_one(name: str) -> Creature:
+def get_one(name: str) -> Explorer:
     qry = "select * from creature where name=:name"
     params = {"name": name}
     curs.execute(qry, params)
@@ -33,12 +33,12 @@ def get_one(name: str) -> Creature:
         raise Missing(msg=f"Creature {name} not found")
 
 
-def get_all() -> list[Creature]:
+def get_all() -> list[Explorer]:
     qry = "select * from creature"
     curs.execute(qry)
     return [row_to_model(row) for row in curs.fetchall()]
 
-def create(creature: Creature):
+def create(creature: Explorer):
     qry = """insert into creature (name, description, country, area, aka)
      values (:name, :description, :country, :area, :aka)"""
     params = model_to_dict(creature)
@@ -49,7 +49,7 @@ def create(creature: Creature):
                         f"Creature {creature.name} already exists")
     return get_one(creature.name)
 
-def modify(name: str, creature: Creature):
+def modify(name: str, creature: Explorer):
     qry = """update creature
                set name=:name,
                    country=:country,

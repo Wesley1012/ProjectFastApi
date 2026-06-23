@@ -1,47 +1,46 @@
 import os
 import pytest
-from model.creature import Explorer
+from model.explorer import Explorer
 from errors import Missing, Duplicate
 
 os.environ["CRYPTID_SQLITE_DB"] = ":memory:"
-from data import creature
+from data import explorer
 
 @pytest.fixture()
 def sample() -> Explorer:
-    return Explorer(name="yeti", country="CN", area="Mahachkala",
-                    description="Chupapi Munyanya",
-                    aka="48")
+    return Explorer(name="Jack Black", country="CN",
+                    description="Oooh maaan!!")
 
 def test_create(sample: Explorer):
-    resp = creature.create(sample)
+    resp = explorer.create(sample)
     assert resp == sample
 
 def test_creature_duplicate(sample: Explorer):
     with pytest.raises(Duplicate):
-        _ = creature.create(sample)
+        _ = explorer.create(sample)
 
 def test_get_one(sample: Explorer):
-    resp = creature.get_one(sample.name)
+    resp = explorer.get_one(sample.name)
     assert resp == sample
 
 def test_get_one_missing(sample: Explorer):
     with pytest.raises(Missing):
-        _ = creature.get_one("Zalupa")
+        _ = explorer.get_one("Zalupa")
 
 def test_modify(sample: Explorer):
-    creature.area = "Pereulok promejbulok"
-    resp = creature.modify(sample.name, sample)
+    explorer.country = "Ryazan'"
+    resp = explorer.modify(sample.name, sample)
     assert resp == sample
 
 def test_modify_missing():
-    thing: Explorer = Explorer(name="Smurfle", country="RU", area="HZ", description="Some gav", aka="47")
+    thing: Explorer = Explorer(name="Smurfle", country="RU", description="Some gav")
     with pytest.raises(Missing):
-        _ = creature.modify(thing.name, thing)
+        _ = explorer.modify(thing.name, thing)
 
 def test_delete(sample: Explorer):
-    resp = creature.delete(sample.name)
+    resp = explorer.delete(sample.name)
     assert resp is None
 
 def test_delete_missing(sample: Explorer):
     with pytest.raises(Missing):
-        _ = creature.delete(sample.name)
+        _ = explorer.delete(sample.name)
