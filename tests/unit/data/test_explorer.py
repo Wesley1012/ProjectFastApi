@@ -32,10 +32,15 @@ def test_modify(sample: Explorer):
     resp = explorer.modify(sample.name, sample)
     assert resp == sample
 
-def test_modify_missing():
-    thing: Explorer = Explorer(name="Smurfle", country="RU", description="Some gav")
+@pytest.mark.parametrize("exp",
+                         [Explorer(name="Torch", country="BC", description="Nu kak tam s den'gami"),
+                          Explorer(name="Obama", country="JD", description="Chupapi menyanya"),
+                          Explorer(name="1337", country="33", description="32424"),
+                          Explorer(name="", country="", description="")])
+def test_modify_missing(exp: Explorer):
+    # exp: Explorer = Explorer(name="Torch", country="BC", description="Nu kak tam s den'gami")
     with pytest.raises(Missing):
-        _ = explorer.modify(thing.name, thing)
+        _ = explorer.modify(exp.name, exp)
 
 def test_delete(sample: Explorer):
     resp = explorer.delete(sample.name)
