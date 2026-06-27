@@ -23,6 +23,7 @@ def test_get_one(sample: Explorer):
     resp = explorer.get_one(sample.name)
     assert resp == sample
 
+
 def test_get_one_missing(sample: Explorer):
     with pytest.raises(Missing):
         _ = explorer.get_one("Zalupa")
@@ -34,7 +35,7 @@ def test_modify(sample: Explorer):
 
 @pytest.mark.parametrize("exp",
                          [Explorer(name="Torch", country="BC", description="Nu kak tam s den'gami"),
-                          Explorer(name="Obama", country="JD", description="Chupapi menyanya"),
+                          Explorer(name="a", country="d", description="i"),
                           Explorer(name="1337", country="33", description="32424"),
                           Explorer(name="", country="", description="")])
 def test_modify_missing(exp: Explorer):
