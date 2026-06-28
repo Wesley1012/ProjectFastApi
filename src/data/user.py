@@ -1,7 +1,5 @@
-from ecdsa.test_malformed_sigs import params
-
 from model.user import User
-from init import conn, curs, get_db, IntegrityError
+from data.init import conn, curs, get_db, IntegrityError
 from errors import Missing, Duplicate
 
 curs.execute("""create table if not exists user(
@@ -10,14 +8,14 @@ curs.execute("""create table if not exists user(
 
 curs.execute("""create table if not exists xuser(
                 name text primary key,
-                hash text""")
+                hash text)""")
 
-def row_to_model(row: tuple) -> dict:
+def row_to_model(row: tuple) -> User:
     name, hash = row
     return User(name=name, hash=hash)
 
 def model_to_dict(user: User) -> dict:
-    return user.dict()
+    return user.model_dump() if user else {}
 
 def get_one(name: str) -> User:
     qry = """select * from user where name=:name"""
@@ -45,6 +43,7 @@ def create(user: User, table: str = "user"):
         curs.execute(qry, params)
     except IntegrityError:
         raise Duplicate(msg=f"{table}: user {user.name} already exists")
+    return get_one(user.name)
 
 def modify(name: str, user: User) -> User:
     qry = """update user set 
